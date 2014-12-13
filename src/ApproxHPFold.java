@@ -52,7 +52,7 @@ public class ApproxHPFold {
                     }else {
                         //Change side
                         if(k==1)
-                            retL +="n";
+                            retL +="s";
                         else
                             retL += "?";
                         k--;
@@ -116,5 +116,114 @@ public class ApproxHPFold {
                 v++;
         }
         return v;
+    }
+
+    public static void printFolding(String seq,String fold){
+        ArrayList<char[]> foldingChars = new ArrayList<char[]>();
+        ArrayList<char[]> foldingSymbols = new ArrayList<char[]>();
+        ArrayList<char[]> foldingSymbolsUp = new ArrayList<char[]>();
+        ArrayList<char[]> foldingHyBack = new ArrayList<char[]>();
+
+        char[] folda = fold.toCharArray();
+        char[] workingChars = new char[seq.length()];
+        char[] workingBars = new char[seq.length()];
+        char[] workingBarsUp = new char[seq.length()];
+        char[] workingHyBack = new char[seq.length()];
+
+        foldingChars.add(workingChars);
+        foldingSymbols.add(workingBars);
+        foldingSymbolsUp.add(workingBarsUp);
+        foldingHyBack.add(workingHyBack);
+
+        int indexX = 0;
+        int indexY = 0;
+        for(int i=0; i<seq.length()-1;i++){
+            switch(folda[i]){
+                case 'e':
+                    workingBars[indexX]='-';
+                    workingChars[indexX]=seq.charAt(i);
+                    indexX++;
+                    break;
+                case 'n':
+                    workingChars[indexX]=seq.charAt(i);
+                    indexY--;
+                    if(indexY >=0 && foldingChars.get(indexY)!=null){
+                        workingBars = foldingSymbols.get(indexY);
+                        workingChars = foldingChars.get(indexY);
+                        workingBarsUp = foldingSymbolsUp.get(indexY);
+                        workingHyBack = foldingHyBack.get(indexY);
+                    }else{
+                        if(indexY<0)
+                            indexY=0;
+                        workingBars = new char[seq.length()];
+                        workingChars = new char[seq.length()];
+                        workingBarsUp = new char[seq.length()];
+                        workingHyBack = new char[seq.length()];
+                        foldingChars.add(indexY,workingChars);
+                        foldingSymbols.add(indexY,workingBars);
+                        foldingSymbolsUp.add(indexY,workingBarsUp);
+                        foldingHyBack.add(workingHyBack);
+                    }
+                    workingBarsUp[indexX]='|';
+                    break;
+                case 's':
+                    workingBars[indexX]='|';
+                    workingChars[indexX]=seq.charAt(i);
+                    indexY++;
+                    if(foldingChars.size()>indexY){
+                        workingBars = foldingSymbols.get(indexY);
+                        workingChars = foldingChars.get(indexY);
+                        workingBarsUp = foldingSymbolsUp.get(indexY);
+                        workingHyBack = foldingHyBack.get(indexY);
+                    }else{
+                        workingBars = new char[seq.length()];
+                        workingChars = new char[seq.length()];
+                        workingBarsUp = new char[seq.length()];
+                        workingHyBack = new char[seq.length()];
+                        foldingChars.add(indexY,workingChars);
+                        foldingSymbols.add(indexY,workingBars);
+                        foldingSymbolsUp.add(indexY,workingBarsUp);
+                        foldingHyBack.add(workingHyBack);
+                    }
+                    break;
+                case 'w':
+                    workingHyBack[indexX]='-';
+                    workingChars[indexX]=seq.charAt(i);
+                    indexX--;
+                    break;
+            }
+        }
+        workingChars[indexX]=seq.charAt(seq.length()-1);
+        for(int j=0; j<foldingChars.size();j++){
+            char[] ca = foldingChars.get(j);
+            char[] sa = foldingSymbols.get(j);
+            char[] saBarUp = foldingSymbolsUp.get(j);
+            char[] saHyUp = foldingHyBack.get(j);
+            String c = "";
+            String s = "";
+            for(int i=0; i<ca.length;i++){
+                if(sa[i]=='-') {
+                    c +=ca[i] + "\t" + "-" + "\t";
+                    if(saBarUp[i]=='|')
+                        s += "|" +"\t" + " " + "\t";
+                    else
+                        s += " " +"\t" + " " + "\t";
+                } else if((sa[i]=='|')) {
+                        c += ca[i] + "\t" + " " + "\t";
+                        s += "|" + "\t" + " " + "\t";
+                }else{
+                    if(saHyUp[i]=='-')
+                        c = c.substring(0,c.length()-2) + "-" + "\t" + ca[i] + "\t" + " " + "\t";
+                    else
+                        c += ca[i] + "\t" + " " + "\t";
+                    if(saBarUp[i]=='|')
+                        s += "|" +"\t" + " " + "\t";
+                    else
+                        s += " " +"\t" + " " + "\t";
+                }
+            }
+            System.out.println(c);
+            System.out.println(s);
+        }
     }
 }
