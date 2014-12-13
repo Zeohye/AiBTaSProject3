@@ -193,9 +193,17 @@ public class ApproxHPFold {
                     break;
             }
         }
+
+
         workingChars[indexX]=seq.charAt(seq.length()-1);
+        int score = 0;
         for(int j=0; j<foldingChars.size();j++){
             char[] ca = foldingChars.get(j);
+            char[] caNext;
+            if(j+1<foldingChars.size())
+                caNext = foldingChars.get(j+1);
+            else
+                caNext =null;
             char[] sa = foldingSymbols.get(j);
             char[] saBarUp = foldingSymbolsUp.get(j);
             char[] saHyUp = foldingHyBack.get(j);
@@ -206,24 +214,50 @@ public class ApproxHPFold {
                     c +=ca[i] + "\t" + "-" + "\t";
                     if(saBarUp[i]=='|')
                         s += "|" +"\t" + " " + "\t";
-                    else
-                        s += " " +"\t" + " " + "\t";
+                    else {
+                        if (ca[i]=='h' && caNext != null && caNext[i] == 'h') {
+                            s += "*" + "\t" + " " + "\t";
+                            score++;
+                        }
+                        else
+                            s += " " + "\t" + " " + "\t";
+                    }
                 } else if((sa[i]=='|')) {
-                        c += ca[i] + "\t" + " " + "\t";
+                        if(ca[i]=='h' && i+1<ca.length && ca[i+1]=='h') {
+                            c += ca[i] + "\t" + "*" + "\t";
+                            score++;
+                        }else
+                            c += ca[i] + "\t" + " " + "\t";
                         s += "|" + "\t" + " " + "\t";
-                }else{
-                    if(saHyUp[i]=='-')
-                        c = c.substring(0,c.length()-2) + "-" + "\t" + ca[i] + "\t" + " " + "\t";
-                    else
-                        c += ca[i] + "\t" + " " + "\t";
+                }else {
+                    if (saHyUp[i] == '-') {
+                        if(c.substring(c.length()-2).contains("*"))
+                            score--;
+                        c = c.substring(0, c.length() - 2) + "-" + "\t" + ca[i] + "\t" + " " + "\t";
+                    }
+                    else{
+                        if (ca[i] == 'h' && i + 1 < ca.length && ca[i + 1] == 'h') {
+                            c += ca[i] + "\t" + "*" + "\t";
+                            score++;
+                        }else
+                            c += ca[i] + "\t" + " " + "\t";
+                    }
                     if(saBarUp[i]=='|')
                         s += "|" +"\t" + " " + "\t";
-                    else
-                        s += " " +"\t" + " " + "\t";
+                    else {
+                        if (ca[i] == 'h' && caNext != null && caNext[i] == 'h'){
+                            s += "*" + "\t" + " " + "\t";
+                            score++;
+                        }
+                        else
+                            s += " " + "\t" + " " + "\t";
+                    }
                 }
             }
             System.out.println(c);
             System.out.println(s);
         }
+        System.out.println("score: "+score);
+
     }
 }

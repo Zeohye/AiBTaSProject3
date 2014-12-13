@@ -4,7 +4,7 @@
 public class Main {
 
     public static void main(String[] args) {
-        String seq = "hhhhhhhhhhhhphphpphhpphhpphpphhpphhpphpphhpphhpphphphhhhhhhhhhhh";
+        String seq = "hhhpphphphpphphphpph";
         String result = ApproxHPFold.fold(seq);
 /*
         seq = "hphhhhhh";
