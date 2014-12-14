@@ -244,8 +244,9 @@ public class ApproxHPFold {
                     }
                 } else if((sa[i]=='|')) {
                     if((ca[i]=='h'|| ca[i]=='H') && i+1<ca.length && (ca[i+1]=='h'||ca[i+1]=='H')) {
-                        c += ca[i] + "\t" + "*" + "\t";
-                        score++;
+                        //c += ca[i] + "\t" + "*" + "\t";
+                        c = c.substring(0, c.length() - 2) + "*" + "\t" + ca[i] + "\t" + "*" + "\t";
+                        score++;score++;
                     }else
                         c += ca[i] + "\t" + " " + "\t";
                     s += "|" + "\t" + " " + "\t";
@@ -256,7 +257,7 @@ public class ApproxHPFold {
                         c = c.substring(0, c.length() - 2) + "-" + "\t" + ca[i] + "\t" + " " + "\t";
                     }
                     else{
-                        if ((ca[i] == 'h'||ca[i] == 'H') && i + 1 < ca.length && (ca[i + 1] == 'h'||ca[i + 1] == 'H')) {
+                        if ((ca[i] == 'h'||ca[i] == 'H') && i-1 < ca.length && (ca[i + 1] == 'h'||ca[i + 1] == 'H')) {
                             c += ca[i] + "\t" + "*" + "\t";
                             score++;
                         }else
