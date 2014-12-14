@@ -1,11 +1,13 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Gamer PRO on 12/12/2014.
  */
 public class ApproxHPFold {
 
-    public static String fold(String seq){
+    public static ArrayList<String> fold(String seq){
         ArrayList<Integer> odds = new ArrayList<Integer>();
         ArrayList<Integer> evens = new ArrayList<Integer>();
 
@@ -16,21 +18,39 @@ public class ApproxHPFold {
                     evens.add(i);
             }
             else
-                if(seq.charAt(i) == 'h')
-                    odds.add(i);
+            if(seq.charAt(i) == 'h')
+                odds.add(i);
         }
 
         int v1 = calcMatching(evens,odds,seq);
         int v2 = calcMatching(odds,evens,seq);
 
         String result;
-        if(v1>v2)
-            result = folding(evens,odds,seq);
-        else
+        if(v1>v2) {
+            result = folding(evens, odds, seq);
+            for(int i : evens){
+                if(i==0)
+                    seq = "H"+seq.substring(1);
+                else
+                    seq = seq.substring(0,i)+"H"+seq.substring(i+1);
+            }
+        }
+        else{
             result = folding(odds,evens,seq);
+            for(int i : odds){
+                if(i==0)
+                    seq = "H"+seq.substring(1);
+                else
+                    seq = seq.substring(0,i)+"H"+seq.substring(i+1);
+            }
+        }
 
-        return result;
+        ArrayList<String> ret = new ArrayList<String>();
+        ret.add(seq);
+        ret.add(result);
+        return ret;
     }
+
 
     private static String folding(ArrayList<Integer> l1, ArrayList<Integer> l2, String seq) {
         int startIndex = 0;
@@ -215,7 +235,7 @@ public class ApproxHPFold {
                     if(saBarUp[i]=='|')
                         s += "|" +"\t" + " " + "\t";
                     else {
-                        if (ca[i]=='h' && caNext != null && caNext[i] == 'h') {
+                        if ((ca[i]=='h' || ca[i]=='H') && caNext != null && (caNext[i] == 'h'||caNext[i] == 'H')) {
                             s += "*" + "\t" + " " + "\t";
                             score++;
                         }
@@ -223,12 +243,12 @@ public class ApproxHPFold {
                             s += " " + "\t" + " " + "\t";
                     }
                 } else if((sa[i]=='|')) {
-                        if(ca[i]=='h' && i+1<ca.length && ca[i+1]=='h') {
-                            c += ca[i] + "\t" + "*" + "\t";
-                            score++;
-                        }else
-                            c += ca[i] + "\t" + " " + "\t";
-                        s += "|" + "\t" + " " + "\t";
+                    if((ca[i]=='h'|| ca[i]=='H') && i+1<ca.length && (ca[i+1]=='h'||ca[i+1]=='H')) {
+                        c += ca[i] + "\t" + "*" + "\t";
+                        score++;
+                    }else
+                        c += ca[i] + "\t" + " " + "\t";
+                    s += "|" + "\t" + " " + "\t";
                 }else {
                     if (saHyUp[i] == '-') {
                         if(c.substring(c.length()-2).contains("*"))
@@ -236,7 +256,7 @@ public class ApproxHPFold {
                         c = c.substring(0, c.length() - 2) + "-" + "\t" + ca[i] + "\t" + " " + "\t";
                     }
                     else{
-                        if (ca[i] == 'h' && i + 1 < ca.length && ca[i + 1] == 'h') {
+                        if ((ca[i] == 'h'||ca[i] == 'H') && i + 1 < ca.length && (ca[i + 1] == 'h'||ca[i + 1] == 'H')) {
                             c += ca[i] + "\t" + "*" + "\t";
                             score++;
                         }else
@@ -245,7 +265,7 @@ public class ApproxHPFold {
                     if(saBarUp[i]=='|')
                         s += "|" +"\t" + " " + "\t";
                     else {
-                        if (ca[i] == 'h' && caNext != null && caNext[i] == 'h'){
+                        if ((ca[i] == 'h'||ca[i] == 'H') && caNext != null && (caNext[i] == 'h'||caNext[i] == 'H')){
                             s += "*" + "\t" + " " + "\t";
                             score++;
                         }
